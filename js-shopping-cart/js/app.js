@@ -32,10 +32,7 @@ for (let j = 0; j < COURSES.length; j++) {
              <p>
             Disponible: <span class = "stock" > ${ stock } </span>
              </p>
-            <a href = "#"
-            class = "add-to-cart"
-            data - id = "${id}"> <i i class = "fa
-            fa - cart - plus "></i>Ajouter au panier</a> 
+            <a href = "#" class = "add-to-cart" data-id = "${id}"> <i i class = "fa fa - cart - plus "></i>Ajouter au panier</a> 
             </div> 
             </div>`;
 }
@@ -52,7 +49,12 @@ let stocks = document.querySelectorAll('.stock');
 for (let i = 0; i < COURSES.length; i++) {
     //Internal vars initialisation
 
-
+    courses[i].addEventListener('click', (event) => {
+        let idCours = event.target.getAttribute('data-id');
+        cartNumbers(COURSES[i]);
+        totalCout(COURSES[i]);
+        addItem(idCours);
+    })
 
 
 
@@ -105,6 +107,14 @@ for (let i = 0; i < COURSES.length; i++) {
 
 //  
 
+function ReloadPage() {
+    let productsNumbers = localStorage.getItem('cartNumbers');
+
+    if (productsNumbers) {
+        document.querySelector('#cart-table');
+    }
+}
+
 function cartNumbers(COURSES) {
 
     console.log("item clicked", COURSES);
@@ -113,16 +123,90 @@ function cartNumbers(COURSES) {
 
 
     if (productsNumbers) {
-
         localStorage.setItem('cartNumbers', productsNumbers + 1);
-    } else {
+        document.querySelector('#cart-table');
 
+    } else {
         localStorage.setItem('cartNumbers', 1);
+        document.querySelector('#cart-table');
+
     }
 
+    setItems(COURSES);
 
 
 }
+
+function setItems(COURSES) {
+    let panierItems2 = localStorage.getItem('productsInCart');
+    panierItems2 = JSON.parse(panierItems2);
+
+    if (panierItems2 != null) {
+
+        if (panierItems2[COURSES.title] == undefined) {
+            panierItems2 = {
+                ...panierItems2,
+                [COURSES.title]: COURSES
+            }
+        }
+        panierItems2[COURSES.title].inCart += 1;
+    } else {
+        COURSES.inCart = 1;
+        panierItems2 = {
+            [COURSES.title]: COURSES
+        }
+    }
+
+    localStorage.setItem('productsInCart', JSON.stringify(panierItems2));
+
+}
+
+function totalCout(COURSES) {
+    let panierTotal = localStorage.getItem('totalCout')
+    if (panierTotal != null) {
+        panierTotal = parseInt(panierTotal);
+        localStorage.setItem("totalCout", panierTotal + COURSES.price);
+    } else {
+        localStorage.setItem("totalCout", COURSES.price)
+    }
+
+}
+
+function addItem(idCours) {
+
+    let cours = rechercherCours(idCours);
+
+    let row = document.createElement('tr');
+
+    for (let i = 0; i < COURSES.length; i++) {
+
+        if (COURSES[i].id === Number(idCours)) {
+            let html = `
+            <td><img src="img/courses/${COURSES[i].img}"></td>
+            <td>${COURSES[i].title}</td>
+            <td>${COURSES[i].price}</td>
+            <td>1</td>
+            <td>X</td>`;
+            row.innerHTML = html;
+        }
+    }
+    let panier = document.querySelector('#cart-table tbody');
+    panier.appendChild(row);
+}
+
+function rechercherCours(idCours) {
+    var cours;
+
+    COURSES.forEach(function(item, i) {
+        if (item.id == idCours) cours = item;
+    })
+
+    return cours;
+}
+ReloadPage();
+
+
+
 
 
 
