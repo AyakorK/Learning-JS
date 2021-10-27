@@ -1,5 +1,14 @@
-//Loop Beginning
+displayCartFromLocalStorage();
+
+
+//****************** DISPLAY FROM HTML TO JS ******************//
+
+// Initiate a loop to display all the cards that exists in courses.js
+
 for (let j = 0; j < COURSES.length; j++) {
+
+    // Initialize some used variables for changing from HTML to JS
+
     let img = COURSES[j].img;
     let title = COURSES[j].title;
     let init_price = COURSES[j].initial_price;
@@ -9,13 +18,17 @@ for (let j = 0; j < COURSES.length; j++) {
     let mark = COURSES[j].mark;
 
 
+    // If the stock exists in LS then the variable stock applies this value to herself
 
-    if (localStorage.getItem(`Stock de ${COURSES[j].title}`)) {
-        stock = localStorage.getItem(`Stock de ${COURSES[j].title}`)
+    if (localStorage.getItem(`stock-${COURSES[j].id}`)) {
+        stock = localStorage.getItem(`stock-${COURSES[j].id}`)
     }
 
-    // Show all courses in HTML file
+
+    // Make a pattern from our product cards in JS and print it
+
     document.querySelector('.courses__container').innerHTML += ` 
+
     <div class = "course__item" >
             <figure class = "course_img" >
             <img src = "img/courses/${img}" >
@@ -32,63 +45,111 @@ for (let j = 0; j < COURSES.length; j++) {
              <p>
             Disponible: <span class = "stock" > ${ stock } </span>
              </p>
-            <a href = "#" class = "add-to-cart" data-id = "${id}"> <i i class = "fa fa - cart - plus "></i>Ajouter au panier</a> 
+            <a href = "#" class = "add-to-cart" data-id = "${id}"> <i i class = "fa fa-cart-plus "></i>Ajouter au panier</a> 
             </div> 
             </div>`;
+
+
 }
 
-//External vars initialisations
+//****************** END DISPLAY FROM HTML TO JS ******************//
+
+
+
+//****************** TECHNICAL USES ******************//
+
+// Initialize some external variables that we will use later
+
 addToCart = document.getElementsByClassName('add-to-cart');
+
 item = document.getElementsByClassName('course__item');
+
 panier_div = document.getElementById('cart-table');
+
 let courses = document.querySelectorAll('.add-to-cart');
-let panier = document.getElementById('tbody');
+
+let panier = document.querySelector('#cart-table tbody');
+
 let stocks = document.querySelectorAll('.stock');
 
 
-for (let i = 0; i < COURSES.length; i++) {
-    //Internal vars initialisation
-
-    courses[i].addEventListener('click', (event) => {
-        let idCours = event.target.getAttribute('data-id');
-        cartNumbers(COURSES[i]);
-        totalCout(COURSES[i]);
-        addItem(idCours);
-    })
+document.addEventListener('click', function(e) {
 
 
+    if (e.target.classList.contains('empty-cart')) {
 
+        localStorage.clear();
 
+        notifications("Vous avez vidé le panier");
 
+        //When clicking on our "Empty cart" button, clear our localStorage + Notify that we suppressed it
 
-
-    // Stock status
-    if (localStorage.getItem(`Stock de ${COURSES[i].title}`)) {
-        COURSES[i].stock = localStorage.getItem(`Stock de ${COURSES[i].title}`)
     }
-    addToCart[i].addEventListener('click', () => {
 
+})
+
+
+
+for (let i = 0; i < COURSES.length; i++) {
+
+    let stock = COURSES[i].stock;
+
+
+
+    // If the stock exists in LS then the variable stock applies this value to herself
+
+    if (localStorage.getItem(`stock-${COURSES[i].id}`)) {
+
+        COURSES[i].stock = localStorage.getItem(`stock-${COURSES[i].id}`)
+
+    }
+
+    //****************** PRINCIPAL CLICK BUTTONS EVENTS ******************//
+
+    addToCart[i].addEventListener('click', (event) => {
+
+        let idCours = event.target.getAttribute('data-id');
 
         //Try to count how many courses are left
+
+
         if (COURSES[i].stock > 0) {
-            console.clear();
+
+            //If there is a stock, on click reduce it by one
+
             COURSES[i].stock -= 1;
+
+
+
+
+            //Reduce stock by 1 stock it in the LS then print it in the LS
+
+            localStorage.setItem(`stock-${ COURSES[i].id }`, parseInt(localStorage.getItem(`stock-${ COURSES[i].id }`)) - 1)
+
+            stocks[i].innerText = localStorage.getItem(`stock-${ COURSES[i].id }`);
+
+            //Execute some functions to update correctly some values in the LS
+
+            addItemToLocalStorage(idCours);
+
+            addItem(idCours);
+
             cartNumbers(COURSES[i]);
 
-            console.log(COURSES[i].stock);
+            totalCout(COURSES[i]);
 
-            console.log(stocks)
+            //Notify the fact that it was added to the cart
 
-            if (!localStorage.getItem(`Stock de ${COURSES[i].title}`)) {
-                localStorage.setItem(`Stock de ${ COURSES[i].title }`, COURSES[i].stock);
-                stocks[i].innerText = COURSES[i].stock;
-            } else {
-                localStorage.setItem(`Stock de ${ COURSES[i].title }`, parseInt(localStorage.getItem(`Stock de ${ COURSES[i].title }`)) - 1);
-                stocks[i].innerText = localStorage.getItem(`Stock de ${ COURSES[i].title }`);
-            }
+
+            notifications(`${COURSES[i].title} a été ajouté au panier`)
+
 
         } else {
-            alert('Vous ne pouvez pas en acheter davantage'); //If no stock, alert to say that there is none left.
+
+            //If there is no stock left, notify that you can't add more of this product
+
+            notifications("Vous ne pouvez pas en acheter davantage");
+
         }
 
 
@@ -98,126 +159,392 @@ for (let i = 0; i < COURSES.length; i++) {
 
 
 
+    document.addEventListener('click', function(e) {
 
 
-    console.log(COURSES[i]); // Console log all courses
 
+
+        if (e.target.classList.contains('empty-cart')) {
+
+
+
+            //Select our cart from the HTML
+            document.querySelector('#cart-table tbody').innerHTML = "";
+
+            //Let the text be equal to the inital stock of the product
+            stocks[i].innerText = stock;
+
+            //Let the count be equal to the inital stock of the product
+            COURSES[i].stock = stock;
+
+            //Change the value in the LS to correspond to the inital stock
+            localStorage.setItem(`stock-${ COURSES[i].id }`, COURSES[i].stock);
+
+            //Set in the LS the number of items in cart to 0
+            localStorage.setItem('cartNumbers', 0);
+
+            localStorage.setItem('totalCout', 0)
+
+
+
+        } else if (e.target.classList.contains('fa-trash')) {
+
+
+
+            //Ask if the id of the button we press is equal to the ID of the product we want to suppress
+
+            if (COURSES[i].id === Number(e.target.parentNode.id.replace("trash-", ""))) {
+
+                //Remove the tablerow of the cart
+
+                e.target.parentNode.parentNode.remove()
+
+                //Add to the count of the stock of the item 1
+
+                localStorage.setItem(`stock-${ COURSES[i].id }`, parseInt(localStorage.getItem(`stock-${ COURSES[i].id }`)) + 1);
+
+                //Change in the HTML the count of the stock to sync it with our LS.
+
+                stocks[i].innerText = localStorage.getItem(`stock-${ COURSES[i].id }`);
+
+                //Notify that an element has been supressed
+
+                notifications(`Vous avez supprimé ${COURSES[i].title} du panier`)
+
+                //Decrease in our localStorage the number of items in the cart
+
+                let productsNumbers = localStorage.getItem('cartNumbers');
+                localStorage.setItem('cartNumbers', productsNumbers - 1);
+
+                //Call the function updateCartInLS to supress the element from the cart in the localStorage (Row of productsInCart)
+
+
+                updateCartInLS();
+
+
+
+                localStorage.setItem('totalCout', (localStorage.getItem('totalCout') - COURSES[i].price))
+
+
+            }
+
+        }
+    })
+
+    //****************** END OF PRINCIPAL BUTTONS CLICK EVENTS ******************//
 }
 
 
-//  
+document.addEventListener('mouseover', (e) => {
 
-function ReloadPage() {
-    let productsNumbers = localStorage.getItem('cartNumbers');
+    if (e.target.classList.contains('fa-trash')) {
+        e.target.style.cursor = 'pointer';
 
-    if (productsNumbers) {
-        document.querySelector('#cart-table');
+        // When we go over an icon Trash on our cart, change the cursor to a pointer
     }
+
+
+})
+
+
+
+//****************** END OF TECHNICAL USES ******************//
+
+
+
+//****************** CREATION OF FUNCTIONS ******************// 
+
+
+function notifications(message) {
+
+    //Initialize our notification pattern
+
+    document.querySelector('#notification_container').innerHTML += `
+        <div class="content">
+            <img src = "img/cart.png"/>
+            <p>${message}</p>
+        </div>
+    `;
+
+    //Add a timer to supress our notifications after 3 seconds
+
+    setTimeout(function() {
+        document.querySelector('#notification_container .content').remove();
+    }, 3000);
+
 }
 
-function cartNumbers(COURSES) {
+//***** Cart functions *****//
 
-    console.log("item clicked", COURSES);
+
+function addItem(idCours) {
+
+
+
+    //Create a row from an element tablerow
+
+    let row = document.createElement('tr');
+
+    //Create a loop to select all of our items
+
+    for (let i = 0; i < COURSES.length; i++) {
+
+        if (COURSES[i].stock > 0) {
+
+
+            if (COURSES[i].id === Number(idCours)) {
+
+                let course = searchCourse(item);
+
+
+                //Initiate our html to give a pattern to our rows
+
+                let html = `
+                <td><img src="img/courses/${COURSES[i].img}"></td>
+                <td>${COURSES[i].title}</td>
+                <td>${COURSES[i].price}</td>
+                <td>1</td>
+                <td class="trash" id="trash-${COURSES[i].id}"><i class="fa fa-trash" aria-hidden="true"></i></td>`;
+
+                //Put the pattern active on our rows
+
+
+                row.innerHTML = html;
+
+                row.setAttribute('data-id', COURSES[i].id);
+
+
+
+
+            }
+        }
+
+    }
+
+
+    //Initialize our cart by identifying it with his id then his type
+
+    let panier = document.querySelector('#cart-table tbody');
+
+    //Create the row by adding it IN our cart
+
+    panier.appendChild(row);
+
+}
+
+
+
+
+
+/* ************************************************ */
+
+
+
+
+
+function searchCourse(courseId) {
+    var course;
+
+    COURSES.forEach(function(item) {
+        if (item.id == courseId) course = item;
+    })
+
+    return course;
+
+}
+
+
+//***** End of Cart functions *****//
+
+
+//***** Local Storage functions *****//
+
+
+function getCart() {
+
+    // Initiate our cart by identifying it with our LS variable productsInCart
+
+    let cart = localStorage.getItem('productsInCart');
+
+    // If our cart is empty return a table that is empty
+
+    if (cart == null || cart.length == 0) return [];
+
+    // If our cart isn't, return our elements 
+
+    else return JSON.parse(cart);
+
+}
+
+/* ************************************************ */
+
+function addItemToLocalStorage(idCours) {
+
+    //Initialize our Cart's items with the previous function
+
+    let panierItems = getCart();
+
+    // Push in our array our variable
+
+    panierItems.push(idCours);
+
+    // Transform into a string our variable then stock it to the LS
+
+    localStorage.setItem('productsInCart', JSON.stringify(panierItems));
+
+}
+
+
+//***** End of Local Storage functions *****//
+
+
+//***** Storage functions *****//
+
+
+function cartNumbers() {
+
+
+    //Initialize our productsNumbers to be the number in the localStorage of the items that we buy
+
     let productsNumbers = localStorage.getItem('cartNumbers');
     productsNumbers = parseInt(productsNumbers);
 
 
+
     if (productsNumbers) {
         localStorage.setItem('cartNumbers', productsNumbers + 1);
-        document.querySelector('#cart-table');
+
+        //If productNumbers exists, then add one on click 1 to the LS part cartNumbers.
+
 
     } else {
         localStorage.setItem('cartNumbers', 1);
-        document.querySelector('#cart-table');
+
+        //If it doesn't exist then create it on clickand put 1 on start value
 
     }
 
-    setItems(COURSES);
+
 
 
 }
 
-function setItems(COURSES) {
-    let panierItems2 = localStorage.getItem('productsInCart');
-    panierItems2 = JSON.parse(panierItems2);
-
-    if (panierItems2 != null) {
-
-        if (panierItems2[COURSES.title] == undefined) {
-            panierItems2 = {
-                ...panierItems2,
-                [COURSES.title]: COURSES
-            }
-        }
-        panierItems2[COURSES.title].inCart += 1;
-    } else {
-        COURSES.inCart = 1;
-        panierItems2 = {
-            [COURSES.title]: COURSES
-        }
-    }
-
-    localStorage.setItem('productsInCart', JSON.stringify(panierItems2));
-
-}
+/* ************************************************ */
 
 function totalCout(COURSES) {
+
+    //Initialize our total price
+
     let panierTotal = localStorage.getItem('totalCout')
+
+
     if (panierTotal != null) {
+
+        // Transform our total price into an integer
+
         panierTotal = parseInt(panierTotal);
+
+        // Sum our price to the actual value into the localStorage
+
         localStorage.setItem("totalCout", panierTotal + COURSES.price);
+
+
+
     } else {
+
+        // Create a total price in our LS then just put the price of the item
+
         localStorage.setItem("totalCout", COURSES.price)
+
+
+
     }
 
 }
 
-function addItem(idCours) {
+/* ************************************************ */
 
-    let cours = rechercherCours(idCours);
+function updateCartInLS() {
 
-    let row = document.createElement('tr');
 
-    for (let i = 0; i < COURSES.length; i++) {
+    // Identify our cart and our rows
 
-        if (COURSES[i].id === Number(idCours)) {
-            let html = `
-            <td><img src="img/courses/${COURSES[i].img}"></td>
-            <td>${COURSES[i].title}</td>
-            <td>${COURSES[i].price}</td>
-            <td>1</td>
-            <td>X</td>`;
-            row.innerHTML = html;
-        }
-    }
     let panier = document.querySelector('#cart-table tbody');
-    panier.appendChild(row);
-}
+    let rows = panier.querySelectorAll('tr');
 
-function rechercherCours(idCours) {
-    var cours;
+    // Set a table with cart's items and initialize it without any element
 
-    COURSES.forEach(function(item, i) {
-        if (item.id == idCours) cours = item;
+    let panierItems = [];
+
+    console.log(panierItems);
+
+    // Loop our rows to get all data-IDs and push them in the table
+
+    rows.forEach(function(row, key) {
+        let dataId = row.getAttribute('data-id');
+
+        panierItems.push(dataId);
+
     })
 
-    return cours;
+
+
+    console.log(panierItems);
+
+    // Store in our LS the table 
+
+    localStorage.setItem('productsInCart', JSON.stringify(panierItems));
 }
-ReloadPage();
 
 
+//***** End of Storage functions *****//
 
 
+//***** Reload Function *****//
 
 
+function displayCartFromLocalStorage() {
+    let panierItems = getCart();
+    let panier = document.querySelector('#cart-table tbody');
+
+    // Loop our Cart's content and get course informations related to her ID
+
+    panierItems.forEach(function(item, key) {
+
+        // Create the line that will contain our content
+
+        let row = document.createElement('tr');
+
+        // Take the informations by content's ID
+
+        let course = searchCourse(item);
+
+        // Create the pattern for the line
+
+        let html = `
+            <td><img src="img/courses/${course.img}"></td>
+            <td>${course.title}</td>
+            <td>${course.price}</td>
+            <td>1</td>
+            <td class="trash" id="trash-${course.id}"><i class="fa fa-trash" aria-hidden="true"></i></td>
+            `;
+
+        // Give to the row the pattern
+
+        row.innerHTML = html;
+
+        // Create the line in our cart
+
+        panier.appendChild(row);
+
+        // Give a data-id to our row to identify it on the localStorage
+
+        row.setAttribute('data-id', course.id);
+
+    });
+}
+
+//***** End of Reload Function *****//
 
 
-
-
-// let carts = document.querySelectorAll('.add-to-cart');
-
-// for (let i = 0; i < carts.length; i++) {
-//     carts[i].addEventListener('click', () => {
-//         console.log("added to cart")
-//     })
-// }
+//****************** END OF THE CREATION OF FUNCTIONS ******************//
