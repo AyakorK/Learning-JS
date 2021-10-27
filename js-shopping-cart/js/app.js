@@ -491,7 +491,15 @@ function updateCartInLS() {
 
     // Store in our LS the table 
 
-    localStorage.setItem('productsInCart', JSON.stringify(panierItems));
+
+    console.log(JSON.parse(localStorage.getItem('productsInCart')).length)
+
+    if (JSON.parse(localStorage.getItem('productsInCart')).length !== 1) {
+        localStorage.setItem('productsInCart', JSON.stringify(panierItems));
+    } else {
+
+        localStorage.removeItem('productsInCart')
+    }
 }
 
 
