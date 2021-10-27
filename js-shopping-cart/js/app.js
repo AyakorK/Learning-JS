@@ -66,9 +66,9 @@ item = document.getElementsByClassName('course__item');
 
 panier_div = document.getElementById('cart-table');
 
-let courses = document.querySelectorAll('.add-to-cart');
 
-let panier = document.querySelector('#cart-table tbody');
+
+
 
 let stocks = document.querySelectorAll('.stock');
 
@@ -294,8 +294,6 @@ function addItem(idCours) {
 
             if (COURSES[i].id === Number(idCours)) {
 
-                let course = searchCourse(item);
-
 
                 //Initiate our html to give a pattern to our rows
 
@@ -509,7 +507,7 @@ function displayCartFromLocalStorage() {
 
     // Loop our Cart's content and get course informations related to her ID
 
-    panierItems.forEach(function(item, key) {
+    panierItems.forEach(function(item) {
 
         // Create the line that will contain our content
 
