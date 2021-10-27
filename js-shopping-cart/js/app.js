@@ -478,7 +478,7 @@ function updateCartInLS() {
 
     // Loop our rows to get all data-IDs and push them in the table
 
-    rows.forEach(function(row, key) {
+    rows.forEach(function(row) {
         let dataId = row.getAttribute('data-id');
 
         panierItems.push(dataId);
