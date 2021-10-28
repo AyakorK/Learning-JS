@@ -1,5 +1,5 @@
-# Shopping-market in JS
- Exercise to learn JavaScript by adding features and animations in a reproduction of a shopping-market website
+# E-commerce in JS
+ Exercise to learn JavaScript by adding features and animations in a reproduction of a e-commerce website
 
 ## Where are the most important files located?
 
