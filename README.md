@@ -4,9 +4,9 @@
 ## Where are the most important files located?
 
 ```bash
-$ app.js
-$ search.js
-$ courses.js
+$ js/app.js
+$ js/search.js
+$ data/courses.js
 $ index.html
 ```
 
