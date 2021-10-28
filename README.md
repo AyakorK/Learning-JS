@@ -18,9 +18,11 @@ This repository is the result of a school exercise and of a sprint of 1 week to 
 
 This work has been made with students when we were in a group here is their github :
 
-Rui Miguel Gaspar : https://github.com/justRunnz
-Lucas Goncalves : https://github.com/RuKaSuu
-Gregory CORNIER : https://github.com/SetsunaGg
+```bash
+$ Rui Miguel Gaspar : https://github.com/justRunnz
+$ Lucas Goncalves : https://github.com/RuKaSuu
+$ Gregory CORNIER : https://github.com/SetsunaGg
+```
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
