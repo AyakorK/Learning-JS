@@ -82,11 +82,22 @@ document.addEventListener('click', function(e) {
 
         notifications("Vous avez vidé le panier");
 
+
         //When clicking on our "Empty cart" button, clear the localStorage + Notify that we suppressed it
+
+
+        //Set in the LS the number of items in cart to 0
+        localStorage.setItem('cartNumbers', 0);
+
+        // Set in the LS the cost to 0
+
+        localStorage.setItem('totalCout', 0)
+
 
     }
 
 })
+
 
 
 
@@ -108,9 +119,10 @@ for (let i = 0; i < COURSES.length; i++) {
 
     addToCart[i].addEventListener('click', (event) => {
 
+        // Catch and save the data-id of the element we clicked
+
         let idCours = event.target.getAttribute('data-id');
 
-        //Try to count how many courses are left
 
 
         if (COURSES[i].stock > 0) {
@@ -173,7 +185,7 @@ for (let i = 0; i < COURSES.length; i++) {
 
 
 
-            //Select our cart from the HTML
+            //Select our cart from the HTML and put it in void to suppress all the elements that are in
             document.querySelector('#cart-table tbody').innerHTML = "";
 
             //Let the text be equal to the inital stock of the product
@@ -188,6 +200,8 @@ for (let i = 0; i < COURSES.length; i++) {
             //Set in the LS the number of items in cart to 0
             localStorage.setItem('cartNumbers', 0);
 
+            // Set in the LS the cost to 0
+
             localStorage.setItem('totalCout', 0)
 
 
@@ -195,7 +209,6 @@ for (let i = 0; i < COURSES.length; i++) {
 
 
         } else if (e.target.classList.contains('fa-trash')) {
-
 
 
             //Ask if the id of the button we press is equal to the ID of the product we want to suppress
@@ -231,6 +244,8 @@ for (let i = 0; i < COURSES.length; i++) {
                 //Decrease  the cost of the product in the localStorage
 
                 localStorage.setItem('totalCout', (localStorage.getItem('totalCout') - COURSES[i].price))
+
+                // Update the stock to be the stock printed in the LS
 
                 COURSES[i].stock = localStorage.getItem(`stock-${COURSES[i].id}`)
 
