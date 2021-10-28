@@ -280,7 +280,7 @@ header .submenu:hover #cart::-webkit-scrollbar-thumb:hover {
 
 .course__item .add-to-cart:hover {
     background: #0098a0;
-    font-size: 0.85em;
+    transform: scale(1.05);
     box-shadow: 8px 5px 8px rgba(82, 82, 82, 0.399);
     transition: 0.4s;
     color: white;

@@ -82,7 +82,7 @@ document.addEventListener('click', function(e) {
 
         notifications("Vous avez vidé le panier");
 
-        //When clicking on our "Empty cart" button, clear our localStorage + Notify that we suppressed it
+        //When clicking on our "Empty cart" button, clear the localStorage + Notify that we suppressed it
 
     }
 
@@ -115,18 +115,15 @@ for (let i = 0; i < COURSES.length; i++) {
 
         if (COURSES[i].stock > 0) {
 
-            //If there is a stock, on click reduce it by one
-
-            COURSES[i].stock -= 1;
-
-
 
 
             //Reduce stock by 1 stock it in the LS then print it in the LS
 
+
             localStorage.setItem(`stock-${ COURSES[i].id }`, parseInt(localStorage.getItem(`stock-${ COURSES[i].id }`)) - 1)
 
-            stocks[i].innerText = localStorage.getItem(`stock-${ COURSES[i].id }`);
+
+
 
             //Execute some functions to update correctly some values in the LS
 
@@ -141,10 +138,18 @@ for (let i = 0; i < COURSES.length; i++) {
             //Notify the fact that it was added to the cart
 
 
+
             notifications(`${COURSES[i].title} a été ajouté au panier`)
 
 
+
+            stocks[i].innerText = localStorage.getItem(`stock-${ COURSES[i].id }`);
+
+            COURSES[i].stock = localStorage.getItem(`stock-${COURSES[i].id}`)
+
         } else {
+
+
 
             //If there is no stock left, notify that you can't add more of this product
 
@@ -187,6 +192,8 @@ for (let i = 0; i < COURSES.length; i++) {
 
 
 
+
+
         } else if (e.target.classList.contains('fa-trash')) {
 
 
@@ -221,10 +228,11 @@ for (let i = 0; i < COURSES.length; i++) {
 
                 updateCartInLS();
 
-
+                //Decrease  the cost of the product in the localStorage
 
                 localStorage.setItem('totalCout', (localStorage.getItem('totalCout') - COURSES[i].price))
 
+                COURSES[i].stock = localStorage.getItem(`stock-${COURSES[i].id}`)
 
             }
 
@@ -289,7 +297,7 @@ function addItem(idCours) {
 
     for (let i = 0; i < COURSES.length; i++) {
 
-        if (COURSES[i].stock > 0) {
+        if (COURSES[i].stock >= 0) {
 
 
             if (COURSES[i].id === Number(idCours)) {
@@ -306,8 +314,9 @@ function addItem(idCours) {
 
                 //Put the pattern active on our rows
 
-
                 row.innerHTML = html;
+
+                //Set the data-id attribute for the row at her creation
 
                 row.setAttribute('data-id', COURSES[i].id);
 
@@ -495,8 +504,13 @@ function updateCartInLS() {
     console.log(JSON.parse(localStorage.getItem('productsInCart')).length)
 
     if (JSON.parse(localStorage.getItem('productsInCart')).length !== 1) {
+
+        // If there is an item in the cart, put the other one in the LS.
+
         localStorage.setItem('productsInCart', JSON.stringify(panierItems));
     } else {
+
+        // If there is none, remove productsInCart from the LS 
 
         localStorage.removeItem('productsInCart')
     }
