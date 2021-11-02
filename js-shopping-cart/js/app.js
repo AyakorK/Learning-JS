@@ -80,7 +80,7 @@ document.addEventListener('click', function(e) {
 
         localStorage.clear();
 
-        notifications("Vous avez vidé le panier");
+        notifications("Vous avez vidé le panier", 5000);
 
 
         //When clicking on our "Empty cart" button, clear the localStorage + Notify that we suppressed it
@@ -151,7 +151,7 @@ for (let i = 0; i < COURSES.length; i++) {
 
 
 
-            notifications(`${COURSES[i].title} a été ajouté au panier`)
+            notifications(`${COURSES[i].title} a été ajouté au panier`, 2000)
 
 
 
@@ -165,7 +165,7 @@ for (let i = 0; i < COURSES.length; i++) {
 
             //If there is no stock left, notify that you can't add more of this product
 
-            notifications("Vous ne pouvez pas en acheter davantage");
+            notifications("Vous ne pouvez pas en acheter davantage", 5000);
 
         }
 
@@ -229,7 +229,7 @@ for (let i = 0; i < COURSES.length; i++) {
 
                 //Notify that an element has been supressed
 
-                notifications(`Vous avez supprimé ${COURSES[i].title} du panier`)
+                notifications(`Vous avez supprimé ${COURSES[i].title} du panier`, 2000);
 
                 //Decrease in our localStorage the number of items in the cart
 
@@ -278,7 +278,7 @@ document.addEventListener('mouseover', (e) => {
 //****************** CREATION OF FUNCTIONS ******************// 
 
 
-function notifications(message) {
+function notifications(message, time) {
 
     //Initialize our notification pattern
 
@@ -293,7 +293,7 @@ function notifications(message) {
 
     setTimeout(function() {
         document.querySelector('#notification_container .content').remove();
-    }, 3000);
+    }, time);
 
 }
 
